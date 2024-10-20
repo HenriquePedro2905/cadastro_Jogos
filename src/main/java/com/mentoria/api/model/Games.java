@@ -26,7 +26,7 @@ public class Games {
         this.title = dt.title();
         this.genre = dt.genre();
         this.plataform = dt.plataform();
-        this.releaseDate = dt.releaseDate();
+        this.releaseDate = Date.valueOf(dt.releaseDate());
     }
 
     @Id
