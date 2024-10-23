@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.mentoria.api.DTO.GamesDTO;
@@ -32,6 +31,9 @@ public class GamesServiceTest {
     @InjectMocks
     private GamesService gamesService;
 
+    @Mock
+    private UtilService utilService;
+
     private List<Games> gamesList;
 
     private Games game;
@@ -41,7 +43,7 @@ public class GamesServiceTest {
     @BeforeEach
     void setup(){
         gamesDTOs = new GamesDTO("teste", "teste2", "teste3", "2024-05-06");
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         gamesList = Arrays.asList(
             new Games(gamesDTOs),
             new Games(gamesDTOs)
@@ -57,6 +59,7 @@ public class GamesServiceTest {
         Games games = new Games(gamesDTO);
 
         when(repository.save(any(Games.class))).thenReturn(games);
+        when(utilService.validateData(gamesDTO)).thenReturn(true);
 
         Games savedGame = gamesService.save(gamesDTO);
 
@@ -68,7 +71,7 @@ public class GamesServiceTest {
     @Test
     void testSave_withNullDTO() {
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(ResponseStatusException.class, () -> {
             gamesService.save(null);
         });
 
@@ -80,7 +83,7 @@ public class GamesServiceTest {
         
         GamesDTO gamesDTO = new GamesDTO(null, "teste2", "teste3", "2024-05-06");
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(ResponseStatusException.class, () -> {
             gamesService.save(gamesDTO);
         });
 
@@ -92,7 +95,7 @@ public class GamesServiceTest {
         
         GamesDTO gamesDTO = new GamesDTO("teste", null, "teste3", "2024-05-06");
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(ResponseStatusException.class, () -> {
             gamesService.save(gamesDTO);
         });
 
@@ -104,7 +107,7 @@ public class GamesServiceTest {
         
         GamesDTO gamesDTO = new GamesDTO("teste", "teste2", null, "2024-05-06");
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(ResponseStatusException.class, () -> {
             gamesService.save(gamesDTO);
         });
 

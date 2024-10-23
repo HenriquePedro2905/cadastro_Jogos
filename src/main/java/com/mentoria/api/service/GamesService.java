@@ -19,12 +19,15 @@ public class GamesService {
     @Autowired
     private GamesRepository repository;
 
+    @Autowired
+    private UtilService util;
+
     public Games save(GamesDTO data){ 
-        if(data != null && validateData(data)){
+        if(data != null && util.validateData(data)){
             Games games = new Games(data);
             return repository.save(games);
         } else {
-            throw new IllegalArgumentException();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -60,19 +63,7 @@ public class GamesService {
         if(id != null){
             repository.deleteById(id);
         } else{
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-    }
-
-    private Boolean validateData(GamesDTO data){
-
-        if (data == null) {
-            return false;
-        }
-        
-        return !(data.title() == null || data.title().isEmpty() ||
-        data.genre() == null || data.genre().isEmpty() ||
-        data.plataform() == null || data.plataform().isEmpty() ||
-        data.releaseDate() == null || data.releaseDate().isEmpty());
     }
 }
